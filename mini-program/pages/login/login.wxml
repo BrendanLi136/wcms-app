@@ -1,0 +1,10 @@
+<!-- pages/login/login.wxml -->
+<view class="container">
+  <view class="logo-area">
+    <text class="title">伤口智能分析</text>
+  </view>
+  
+  <button type="primary" class="login-btn" bindtap="handleLogin">微信一键登录</button>
+  
+</view>
+

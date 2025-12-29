@@ -1,0 +1,22 @@
+page {
+    background-color: #F6F7F9;
+}
+.container {
+    padding: 20rpx;
+}
+.item {
+    background: #fff;
+    padding: 30rpx;
+    margin-bottom: 20rpx;
+    border-radius: 12rpx;
+}
+.time {
+    font-size: 26rpx;
+    color: #999;
+    display: block;
+    margin-bottom: 10rpx;
+}
+.content {
+    font-size: 30rpx;
+    color: #333;
+}

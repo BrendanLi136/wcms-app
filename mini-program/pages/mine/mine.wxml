@@ -1,0 +1,35 @@
+<!-- pages/mine/mine.wxml -->
+<view class="container">
+    <view class="user-info">
+        <view class="user-header-row">
+            <!-- Simple Avatar Placeholder if we don't have one -->
+            <view class="avatar-placeholder" style="background:#409EFF; display:flex; align-items:center; justify-content:center; color:#fff; font-size:40rpx;">U</view>
+            <view>
+                 <text class="nickname">微信用户</text>
+                 <text style="color: #999; font-size: 24rpx; margin-top: 5rpx; display: block;">ID: {{userInfo.id}}</text>
+            </view>
+        </view>
+        
+        <view class="info-row">
+             <text style="font-size: 28rpx; color:#666;">手机号: {{userInfo.phone || '未绑定'}}</text>
+             <button wx:if="{{!userInfo.phone}}" size="mini" type="primary" 
+                 open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber"
+                 style="font-size: 24rpx; padding: 0 20rpx; margin:0;">点击授权</button>
+        </view>
+    </view>
+    
+    <view class="menu-list">
+        <view class="menu-item" bindtap="goHistory">
+            <text>上传记录</text>
+            <text class="arrow-icon">></text>
+        </view>
+        <view class="menu-item" bindtap="goReminders">
+            <text>提醒记录</text>
+            <text class="arrow-icon">></text>
+        </view>
+        <view class="menu-item" bindtap="handleLogout">
+             <text style="color: #FF4D4F;">退出登录</text>
+             <text class="arrow-icon">></text>
+        </view>
+    </view>
+</view>

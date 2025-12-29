@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: wcms-backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/wcms_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: wcms_db
+    password: wcms_db
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# Custom Config
+wcms:
+  upload-path: d:/wcms/uploads/
+  ai:
+    deepseek-key: ""
+    doubao-key: ""
+  wechat:
+    appid: "wxf8ef24c969d2125b" # Replace with real AppID
+    secret: "c051bf41ba13879153c532a8d366e9e5" # Replace with real Secret

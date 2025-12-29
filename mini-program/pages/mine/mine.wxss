@@ -1,0 +1,79 @@
+/* Page Background */
+page {
+  background-color: #F6F7F9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+}
+
+.container {
+  padding: 30rpx;
+}
+
+/* User Info Card */
+.user-info {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 30rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-header-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20rpx;
+}
+
+.avatar-placeholder {
+    width: 100rpx;
+    height: 100rpx;
+    background: #E0E0E0;
+    border-radius: 50%;
+    margin-right: 20rpx;
+}
+
+.nickname {
+    font-size: 34rpx;
+    font-weight: 600;
+    color: #333;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10rpx;
+}
+
+/* Menu List */
+.menu-list {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* For border radius */
+}
+
+.menu-item {
+  padding: 30rpx 40rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-bottom: 1rpx solid #F0F0F0;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:active {
+  background-color: #FAFAFA;
+}
+
+.arrow-icon {
+    color: #C0C4CC;
+    font-size: 32rpx;
+}

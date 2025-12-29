@@ -1,0 +1,10 @@
+<!-- pages/reminders/reminders.wxml -->
+<view class="container">
+    <view wx:if="{{list.length === 0}}" style="text-align: center; margin-top: 50rpx; color: #999;">暂无提醒</view>
+    <block wx:for="{{list}}" wx:key="id">
+        <view class="item">
+            <text class="time">{{item.createTime}}</text>
+            <text class="content">提醒内容: {{item.content}}</text>
+        </view>
+    </block>
+</view>

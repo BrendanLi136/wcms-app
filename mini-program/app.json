@@ -1,0 +1,34 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/mine/mine",
+        "pages/login/login",
+        "pages/history/history",
+        "pages/reminders/reminders"
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "伤口智能分析助手",
+        "navigationBarTextStyle": "black"
+    },
+    "tabBar": {
+        "color": "#999",
+        "selectedColor": "#1296db",
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "text": "分析",
+                "iconPath": "image/home.png",
+                "selectedIconPath": "image/home.png"
+            },
+            {
+                "pagePath": "pages/mine/mine",
+                "text": "我的",
+                "iconPath": "image/mine.jpg",
+                "selectedIconPath": "image/mine.jpg"
+            }
+        ]
+    },
+    "sitemapLocation": "sitemap.json"
+}

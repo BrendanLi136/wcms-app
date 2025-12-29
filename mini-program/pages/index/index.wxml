@@ -1,0 +1,105 @@
+<view class="container">
+  <!-- Top Banner (Illustration) -->
+  <view class="header-banner">
+    <!-- You can replace this with a real <image> if you have the asset -->
+    <view class="banner-img">
+        <text style="color:#b0c4de; font-weight:bold; font-size:40rpx;">WCMS Analysis</text>
+    </view>
+  </view>
+
+  <!-- Main Form Card -->
+  <view class="form-card">
+    <form bindsubmit="submitForm">
+  
+      <!-- Medical Record No -->
+      <view class="form-item">
+        <view class="form-label">病历号:</view>
+        <input class="form-input-box" name="medicalRecordNo" placeholder="请输入病历号" placeholder-class="placeholder" value="{{defaultMedicalRecordNo}}" />
+      </view>
+
+      <!-- Patient ID / Name -->
+      <view class="form-item">
+        <view class="form-label">患者姓名:</view>
+        <input class="form-input-box" name="name" placeholder="请输入患者姓名" placeholder-class="placeholder" value="{{defaultName}}" />
+      </view>
+
+      <!-- Gender -->
+      <view class="form-item">
+        <view class="form-label">性别:</view>
+        <picker mode="selector" range="{{['男', '女']}}" bindchange="onGenderChange" name="gender">
+             <view class="picker-box">
+                <text wx:if="{{genderIndex !== null}}">{{ ['男', '女'][genderIndex] }}</text>
+                <text wx:else class="picker-placeholder">请选择</text>
+                <text style="color:#ccc;">▼</text>
+             </view>
+        </picker>
+      </view>
+
+      <!-- Age -->
+      <view class="form-item">
+        <view class="form-label">年龄:</view>
+        <input class="form-input-box" name="age" type="number" placeholder="请输入年龄" value="{{defaultAge}}" />
+      </view>
+
+      <!-- History -->
+      <view class="form-item" style="align-items: flex-start;">
+        <view class="form-label" style="margin-top: 16rpx;">病史:</view>
+        <textarea class="form-textarea-box" name="history" placeholder="请输入病史" />
+      </view>
+
+      <!-- Upload Section -->
+      <view class="upload-section">
+        <view class="upload-label">选择图片:</view>
+        
+        <!-- Only show upload box if no image, or handle multiple? Design shows one box. Assuming single or grid. -->
+        <!-- Based on '1:1', it shows one big box 'Click to Upload'. Let's support one or grid. -->
+        <view class="upload-box" bindtap="chooseImage" wx:if="{{images.length === 0}}">
+            <view class="upload-icon">+</view>
+            <text>点击上传图片</text>
+        </view>
+
+        <!-- Preview List (if images exist) -->
+        <view wx:else style="display:flex; flex-wrap:wrap; gap:10rpx;">
+             <block wx:for="{{images}}" wx:key="*this">
+                <view style="position: relative; width: 100%; height: 300rpx; margin-bottom: 10rpx;">
+                    <image src="{{item}}" mode="aspectFill" style="width:100%; height:100%; border-radius:12rpx;"></image>
+                    <!-- Delete Icon -->
+                    <view catchtap="deleteImage" data-index="{{index}}" style="position: absolute; top: 10rpx; right: 10rpx; width: 40rpx; height: 40rpx; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <text style="color: white; font-size: 24rpx; font-weight: bold;">✕</text>
+                    </view>
+                </view>
+            </block>
+            <!-- Re-upload or Add more -->
+             <view class="upload-box" style="height:100rpx; margin-top:10rpx;" bindtap="chooseImage">
+                <text>+ 添加/重新上传</text>
+            </view>
+        </view>
+      </view>
+
+      <!-- Consent -->
+      <view class="consent-section">
+        <checkbox-group bindchange="onConsentChange">
+            <label style="display: flex; align-items: center;">
+                <checkbox value="agreed" checked="{{isAgreed}}" style="zoom: 0.8; margin-right: 6px;"/>
+                <text>我已阅读并同意 </text>
+            </label>
+        </checkbox-group>
+        <text class="consent-link" bindtap="viewConsent">《知情同意书》</text>
+      </view>
+
+      <!-- Submit Button -->
+      <!-- 'agreed' logic wasn't in the image explicit checkbox, but usually required. 
+           The image says "Informed Consent: Click to View", no obvious checkbox, 
+           BUT implied. I will remove the checkbox to strictly match visual if possible, 
+           OR assume clicking 'Upload and Analyze' implies consent or it's just a link. 
+           Wait, there is a space on the left? No, it looks like a footer text.
+           For safety, I will keep 'agreed' state but maybe auto-set specific to design?
+           Actually, let's keep it simple: Just layout first.
+           Implementation: Image doesn't show a checkbox. I will remove the checkbox for visual accuracy 
+           and maybe just have the text. 
+      -->
+      <button class="submit-btn" form-type="submit">上传并分析</button>
+
+    </form>
+  </view>
+</view>

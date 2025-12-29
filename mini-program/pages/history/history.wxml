@@ -1,0 +1,34 @@
+<!-- pages/history/history.wxml -->
+<view class="container">
+    <view wx:if="{{list.length === 0}}" class="empty-state">
+        <text class="empty-text">暂无上传记录</text>
+    </view>
+    
+    <block wx:for="{{list}}" wx:key="id">
+        <view class="record-card">
+            <view class="card-header">
+                <text class="record-time">{{item.createTime || '未知时间'}}</text>
+                <view class="status-tag {{item.status == 1 ? 'status-success' : (item.status == 2 ? 'status-fail' : 'status-pending')}}">
+                    {{item.status == 1 ? '分析成功' : (item.status == 2 ? '分析失败' : '处理中')}}
+                </view>
+            </view>
+            
+            <view class="card-body">
+                <view class="info-row" wx:if="{{item.medicalRecordNo}}">
+                     <text class="label">病历号:</text>
+                     <text class="value">{{item.medicalRecordNo}}</text>
+                </view>
+                <view class="info-row">
+                     <text class="label">分析结果:</text>
+                     <text class="value {{!item.analysisResult ? 'placeholder-text' : ''}}">{{item.analysisResult || '正在进行AI分析...'}}</text>
+                </view>
+                 <!-- Future: Show Image Thumbnail if item.imagePaths -->
+            </view>
+
+            <view class="card-footer" bindtap="viewDetail" data-id="{{item.id}}">
+                <text>查看详情</text>
+                <text class="arrow">></text>
+            </view>
+        </view>
+    </block>
+</view>
