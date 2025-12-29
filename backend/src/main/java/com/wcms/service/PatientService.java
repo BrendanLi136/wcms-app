@@ -2,7 +2,6 @@ package com.wcms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wcms.domain.entity.Patient;
-import com.wcms.domain.entity.WoundRecord;
 
 public interface PatientService extends IService<Patient> {
     Patient getByOpenId(String openid);
