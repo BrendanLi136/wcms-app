@@ -1,17 +1,29 @@
 package com.wcms.service.impl;
 
 import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wcms.common.utils.QiniuUtil;
+import com.wcms.domain.dto.WoundResp;
+import com.wcms.domain.entity.Patient;
 import com.wcms.domain.entity.WoundRecord;
+import com.wcms.event.EventPublisher;
 import com.wcms.mapper.WoundRecordMapper;
 import com.wcms.service.AIService;
+import com.wcms.service.PatientService;
 import com.wcms.service.WoundService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -19,37 +31,30 @@ import java.util.List;
 public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord> implements WoundService {
 
     private final AIService aiService;
-    private final com.wcms.service.PatientService patientService; // Inject PatientService
+    private final PatientService patientService; // Inject PatientService
+    private final QiniuUtil qiniuUtil;
+    private final EventPublisher eventPublisher;
 
     @Override
     public List<WoundRecord> getWoundsByPatientId(Long patientId) {
-        return this.list(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<WoundRecord>()
-                .eq(WoundRecord::getPatientId, patientId)
-                .orderByDesc(WoundRecord::getCreateTime));
+        return this.list(new LambdaQueryWrapper<WoundRecord>().eq(WoundRecord::getPatientId, patientId).orderByDesc(WoundRecord::getCreateTime));
     }
 
     @Override
-    public String uploadImage(org.springframework.web.multipart.MultipartFile file) {
-        if (file.isEmpty())
-            throw new RuntimeException("Empty file");
+    public String uploadImage(MultipartFile file, Long patientId) {
+        if (file.isEmpty()) throw new RuntimeException("Empty file");
         try {
-            String fileName = java.util.UUID.randomUUID() + "-" + file.getOriginalFilename();
-            String savePath = "d:/wcms/uploads/" + fileName;
-            java.io.File dest = new java.io.File(savePath);
-            if (!dest.getParentFile().exists())
-                dest.getParentFile().mkdirs();
-            file.transferTo(dest);
-            return "/uploads/" + fileName;
+            return qiniuUtil.uploadFile(file, patientId.toString());
         } catch (Exception e) {
             throw new RuntimeException("Upload failed: " + e.getMessage());
         }
     }
 
     @Override
-    public WoundRecord submitAnalysis(Long patientId, String name, Integer age, Integer gender, String history,
-            List<String> imageUrls, String medicalRecordNo) {
+    @Transactional(rollbackFor = Exception.class)
+    public WoundRecord submitAnalysis(Long patientId, String name, Integer age, Integer gender, String history, List<String> imageUrls, String medicalRecordNo) {
         // Update Patient
-        com.wcms.domain.entity.Patient patient = patientService.getById(patientId);
+        Patient patient = patientService.getById(patientId);
         if (patient != null) {
             patient.setName(name);
             patient.setAge(age);
@@ -63,8 +68,8 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
     }
 
     @Override
-    public WoundRecord createAnalysisTask(Long patientId, String patientName, List<String> imageUrls, String history,
-            String model, String medicalRecordNo) {
+    @Transactional(rollbackFor = Exception.class)
+    public WoundRecord createAnalysisTask(Long patientId, String patientName, List<String> imageUrls, String history, String model, String medicalRecordNo) {
         WoundRecord record = new WoundRecord();
         record.setPatientId(patientId);
         record.setPatientName(patientName);
@@ -77,7 +82,7 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
         this.save(record);
 
         // Async call
-        aiService.analyzeWound(record.getId(), history, model);
+        eventPublisher.publishAiAnalysisEvent(record.getId());
 
         return record;
     }
@@ -85,48 +90,39 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
     @Override
     public boolean retryAnalysis(Long recordId) {
         WoundRecord record = this.getById(recordId);
-        if (record == null)
-            return false;
+        if (record == null) return false;
 
         record.setStatus(0); // Reset to Pending
         record.setErrorMsg("");
         this.updateById(record);
 
         // Re-trigger Async AI
-        aiService.analyzeWound(record.getId(), "", record.getAiModel());
+        aiService.analyzeWound(record.getId());
         return true;
     }
 
     @Override
-    public com.baomidou.mybatisplus.core.metadata.IPage<com.wcms.domain.dto.WoundResp> getAdminWoundList(
-            com.baomidou.mybatisplus.extension.plugins.pagination.Page<WoundRecord> page) {
+    public IPage<WoundResp> getAdminWoundList(Page<WoundRecord> page) {
         // 1. Query Wound Records
-        com.baomidou.mybatisplus.core.metadata.IPage<WoundRecord> recordPage = this.page(page,
-                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<WoundRecord>()
-                        .orderByDesc(WoundRecord::getCreateTime));
+        IPage<WoundRecord> recordPage = this.page(page, new LambdaQueryWrapper<WoundRecord>().orderByDesc(WoundRecord::getCreateTime));
 
-        List<com.wcms.domain.dto.WoundResp> respList = new java.util.ArrayList<>();
+        List<WoundResp> respList = new java.util.ArrayList<>();
         if (recordPage.getRecords().isEmpty()) {
-            com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.wcms.domain.dto.WoundResp> result = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(
-                    page.getCurrent(), page.getSize());
+            Page<WoundResp> result = new Page<>(page.getCurrent(), page.getSize());
             result.setTotal(recordPage.getTotal());
             result.setRecords(respList);
             return result;
         }
 
         // 2. Extract Patient IDs
-        List<Long> patientIds = recordPage.getRecords().stream()
-                .map(WoundRecord::getPatientId)
-                .distinct()
-                .collect(java.util.stream.Collectors.toList());
+        List<Long> patientIds = recordPage.getRecords().stream().map(WoundRecord::getPatientId).distinct().collect(Collectors.toList());
 
         // 3. Query Patients
-        java.util.Map<Long, com.wcms.domain.entity.Patient> patientMap = patientService.listByIds(patientIds).stream()
-                .collect(java.util.stream.Collectors.toMap(com.wcms.domain.entity.Patient::getId, p -> p));
+        Map<Long, Patient> patientMap = patientService.listByIds(patientIds).stream().collect(Collectors.toMap(Patient::getId, p -> p));
 
         // 4. Merge
         for (WoundRecord r : recordPage.getRecords()) {
-            com.wcms.domain.dto.WoundResp resp = new com.wcms.domain.dto.WoundResp();
+            WoundResp resp = new WoundResp();
             resp.setId(r.getId());
             resp.setPatientId(r.getPatientId());
             resp.setWoundType(r.getWoundType());
@@ -137,7 +133,7 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
             resp.setErrorMsg(r.getErrorMsg());
             resp.setCreateTime(r.getCreateTime());
 
-            com.wcms.domain.entity.Patient p = patientMap.get(r.getPatientId());
+            Patient p = patientMap.get(r.getPatientId());
             if (p != null) {
                 resp.setPatientName(p.getName());
                 resp.setPatientAge(p.getAge());
@@ -149,8 +145,7 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
             respList.add(resp);
         }
 
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.wcms.domain.dto.WoundResp> resultPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(
-                page.getCurrent(), page.getSize());
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.wcms.domain.dto.WoundResp> resultPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getCurrent(), page.getSize());
         resultPage.setTotal(recordPage.getTotal());
         resultPage.setRecords(respList);
         return resultPage;
@@ -158,9 +153,7 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
 
     @Override
     public List<WoundRecord> getWoundTrend(Long patientId) {
-        return this.list(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<WoundRecord>()
-                .eq(WoundRecord::getPatientId, patientId)
-                .eq(WoundRecord::getStatus, 1) // Only successful analysis
+        return this.list(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<WoundRecord>().eq(WoundRecord::getPatientId, patientId).eq(WoundRecord::getStatus, 1) // Only successful analysis
                 .orderByAsc(WoundRecord::getCreateTime));
     }
 

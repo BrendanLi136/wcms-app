@@ -21,10 +21,16 @@ mybatis-plus:
 
 # Custom Config
 wcms:
-  upload-path: d:/wcms/uploads/
   ai:
-    deepseek-key: ""
-    doubao-key: ""
+    model-name: "deepseek"
+    access-key: ""
   wechat:
     appid: "wxf8ef24c969d2125b" # Replace with real AppID
     secret: "c051bf41ba13879153c532a8d366e9e5" # Replace with real Secret
+
+# 七牛云配置
+qiniu:
+  access-key: g-o-cAeLQoTGkbib91IbPs9quUZYSrBwREieNjKr
+  secret-key: XQiS6QWPoRvcDeW7YHkKksyZ4u22cfapk9fews6O
+  bucket: wams-app
+  domain: t7vecgtjo.hn-bkt.clouddn.com

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class WoundRecord {
     @TableId(type = IdType.AUTO)
     private Long id;
+    private String medicalRecordNo;
     private Long patientId;
     private String imagePaths; // JSON or comma separated
     private String analysisResult;
@@ -22,5 +23,4 @@ public class WoundRecord {
     private String patientName;
     private String woundType;
     private String doctorEvaluation;
-    private String medicalRecordNo;
 }
