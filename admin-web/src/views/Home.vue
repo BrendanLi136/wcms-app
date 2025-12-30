@@ -20,6 +20,10 @@
                 <i class="el-icon-data-line"></i>
                 <span slot="title">伤口演变分析</span>
             </el-menu-item>
+            <el-menu-item index="/config">
+                <i class="el-icon-setting"></i>
+                <span slot="title">AI 模型配置</span>
+            </el-menu-item>
         </el-menu>
     </el-aside>
     <el-container>

@@ -40,6 +40,11 @@ const routes = [
                 path: 'trend',
                 name: 'WoundTrend',
                 component: () => import(/* webpackChunkName: "trend" */ '../views/WoundTrend.vue')
+            },
+            {
+                path: 'config',
+                name: 'AiConfig',
+                component: () => import(/* webpackChunkName: "config" */ '../views/Config.vue')
             }
         ]
     }
