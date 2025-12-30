@@ -1,7 +1,10 @@
 package com.wcms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wcms.common.utils.WeChatUtil;
 import com.wcms.domain.entity.Patient;
 import com.wcms.mapper.PatientMapper;
 import com.wcms.service.PatientService;
@@ -10,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @lombok.RequiredArgsConstructor
 public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> implements PatientService {
-    private final com.wcms.common.utils.WeChatUtil weChatUtil;
+    private final WeChatUtil weChatUtil;
 
     @Override
     public Patient getByOpenId(String openid) {
@@ -24,8 +27,7 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
         String openid = session.getStr("openid");
 
         // Mock fallback if keys not set (for safety during dev if params empty)
-        if (openid == null)
-            openid = "mock_openid_" + code;
+        if (openid == null) openid = "mock_openid_" + code;
 
         Patient patient = this.getByOpenId(openid);
         if (patient == null) {
@@ -60,8 +62,7 @@ public class PatientServiceImpl extends ServiceImpl<PatientMapper, Patient> impl
     }
 
     @Override
-    public com.baomidou.mybatisplus.core.metadata.IPage<Patient> getPatientPage(
-            com.baomidou.mybatisplus.extension.plugins.pagination.Page<Patient> page, String name) {
+    public IPage<Patient> getPatientPage(Page<Patient> page, String name) {
         LambdaQueryWrapper<Patient> wrapper = new LambdaQueryWrapper<>();
         if (name != null && !name.isEmpty()) {
             wrapper.like(Patient::getName, name);

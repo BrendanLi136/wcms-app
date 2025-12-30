@@ -70,10 +70,14 @@ public class AppController {
         return Result.success(woundService.getWoundsByPatientId(patientId));
     }
 
+    private final com.wcms.mapper.ReminderLogMapper reminderLogMapper;
+
     @GetMapping("/reminders")
-    public Result<List<Object>> getReminders(@RequestParam Long patientId) {
-        // Todo: Implement reminders
-        return Result.success(Collections.emptyList());
+    public Result<List<com.wcms.domain.entity.ReminderLog>> getReminders(@RequestParam Long patientId) {
+        return Result.success(reminderLogMapper.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<com.wcms.domain.entity.ReminderLog>()
+                        .eq(com.wcms.domain.entity.ReminderLog::getPatientId, patientId)
+                        .orderByDesc(com.wcms.domain.entity.ReminderLog::getCreateTime)));
     }
 
     @Data
