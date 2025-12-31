@@ -44,11 +44,7 @@ public class AppController {
     // Upload Image
     @PostMapping("/upload")
     public Result<String> upload(@RequestParam("file") MultipartFile file, @RequestParam("patientId") Long patientId) {
-        try {
-            return Result.success(woundService.uploadImage(file, patientId));
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
+        return Result.success(woundService.uploadImage(file, patientId));
     }
 
     // Submit Analysis

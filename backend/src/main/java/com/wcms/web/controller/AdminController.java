@@ -1,6 +1,5 @@
 package com.wcms.web.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wcms.common.result.Result;
 import com.wcms.domain.entity.SysUser;
 import com.wcms.service.SysUserService;

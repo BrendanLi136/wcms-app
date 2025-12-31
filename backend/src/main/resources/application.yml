@@ -19,11 +19,13 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+logging:
+  level:
+    root: INFO
+    com.wcms: DEBUG
+
 # Custom Config
 wcms:
-  ai:
-    model-name: "deepseek"
-    access-key: ""
   wechat:
     appid: "wxf8ef24c969d2125b" # Replace with real AppID
     secret: "c051bf41ba13879153c532a8d366e9e5" # Replace with real Secret

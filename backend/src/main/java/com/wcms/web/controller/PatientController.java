@@ -1,7 +1,6 @@
 package com.wcms.web.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.wcms.common.result.Result;
 import com.wcms.domain.entity.Patient;
 import com.wcms.domain.entity.WoundRecord;

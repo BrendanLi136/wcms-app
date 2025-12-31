@@ -145,7 +145,7 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
             respList.add(resp);
         }
 
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.wcms.domain.dto.WoundResp> resultPage = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getCurrent(), page.getSize());
+        Page<WoundResp> resultPage = new Page<>(page.getCurrent(), page.getSize());
         resultPage.setTotal(recordPage.getTotal());
         resultPage.setRecords(respList);
         return resultPage;
@@ -153,7 +153,7 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
 
     @Override
     public List<WoundRecord> getWoundTrend(Long patientId) {
-        return this.list(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<WoundRecord>().eq(WoundRecord::getPatientId, patientId).eq(WoundRecord::getStatus, 1) // Only successful analysis
+        return this.list(new LambdaQueryWrapper<WoundRecord>().eq(WoundRecord::getPatientId, patientId).eq(WoundRecord::getStatus, 1) // Only successful analysis
                 .orderByAsc(WoundRecord::getCreateTime));
     }
 

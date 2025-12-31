@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 七牛云上传工具类
@@ -64,7 +66,7 @@ public class QiniuUtil {
 
 
     private String getPath(String patientId, String fileName) {
-        return String.format("%s/%s/", FileUtil.generateFileName(fileName), patientId);
+        return String.format("%s/%s/%s",patientId, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), FileUtil.generateFileName(fileName));
     }
 
     /**

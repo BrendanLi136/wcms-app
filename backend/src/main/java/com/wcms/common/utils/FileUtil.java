@@ -38,6 +38,6 @@ public class FileUtil {
             return UUID.randomUUID() + ".jpg";
         }
 
-        return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "." + getFileExtension(fileName);
+        return  UUID.randomUUID() + "." + getFileExtension(fileName);
     }
 }

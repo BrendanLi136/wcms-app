@@ -27,9 +27,9 @@ public class ReminderServiceImpl extends ServiceImpl<ReminderMapper, Reminder> i
     }
 
     @Override
-    @Scheduled(cron = "0 0/1 * * * ?") // Check every minute
+//    @Scheduled(cron = "0 0/1 * * * ?") // Check every minute
     public void processDailyReminders() {
-        log.info("Checking for reminders... {}", LocalDateTime.now());
+        log.debug("Checking for reminders... {}", LocalDateTime.now());
 
         // Find active reminders where nextRunDate <= today AND remindTime <= now
         // Simplified Logic: Select all active, filter in memory for prototype

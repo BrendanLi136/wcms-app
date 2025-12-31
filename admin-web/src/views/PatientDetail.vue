@@ -48,8 +48,8 @@
                             v-for="(img, i) in JSON.parse(activity.imagePaths || '[]')" 
                             :key="i"
                             style="width: 100px; height: 100px"
-                            :src="'http://localhost:8080' + img" 
-                            :preview-src-list="['http://localhost:8080' + img]">
+                            :src="img" 
+                            :preview-src-list="[img]">
                         </el-image>
                     </div>
                     <el-tag :type="activity.status === 1 ? 'success' : (activity.status === 2 ? 'danger' : 'warning')">
@@ -84,7 +84,6 @@
       </span>
   </el-dialog>
 </div>
-
   
 </template>
 
