@@ -12,6 +12,7 @@ import com.wcms.domain.entity.WoundRecord;
 import com.wcms.mapper.WoundRecordMapper;
 import com.wcms.service.AIService;
 import com.wcms.service.PatientService;
+import com.wcms.service.SysLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -28,8 +29,7 @@ public class AIServiceImpl implements AIService {
     private final WoundRecordMapper woundRecordMapper;
     private final PatientService patientService;
     private final CallAI callAI;
-
-
+    private final SysLogService sysLogService;
 
     @Async
     @Override
@@ -64,8 +64,11 @@ public class AIServiceImpl implements AIService {
             woundRecordMapper.updateById(record);
 
             log.info("Analysis Finished for Record: {}", recordId);
+            sysLogService.log("AI",
+                    "Analysis Finished for Record: " + recordId + ", Result: " + analysisDTO.getWoundType(), true);
         } catch (Exception e) {
             log.error("AI Analysis Failed", e);
+            sysLogService.log("AI", "AI Analysis Failed for Record: " + recordId + ", Error: " + e.getMessage(), false);
             WoundRecord record = woundRecordMapper.selectById(recordId);
             if (record != null) {
                 record.setStatus(2); // Fail

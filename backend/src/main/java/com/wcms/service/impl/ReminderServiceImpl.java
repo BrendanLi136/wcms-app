@@ -6,6 +6,7 @@ import com.wcms.domain.entity.Reminder;
 import com.wcms.domain.entity.ReminderLog;
 import com.wcms.mapper.ReminderMapper;
 import com.wcms.service.ReminderService;
+import com.wcms.service.SysLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,21 +20,26 @@ public class ReminderServiceImpl extends ServiceImpl<ReminderMapper, Reminder> i
     private final ReminderMapper reminderMapper;
     private final com.wcms.mapper.ReminderLogMapper reminderLogMapper;
     private final com.wcms.service.PatientService patientService;
+    private final SysLogService sysLogService;
 
-    public ReminderServiceImpl(ReminderMapper reminderMapper, com.wcms.mapper.ReminderLogMapper reminderLogMapper, com.wcms.service.PatientService patientService) {
+    public ReminderServiceImpl(ReminderMapper reminderMapper, com.wcms.mapper.ReminderLogMapper reminderLogMapper,
+            com.wcms.service.PatientService patientService, SysLogService sysLogService) {
         this.reminderMapper = reminderMapper;
         this.reminderLogMapper = reminderLogMapper;
         this.patientService = patientService;
+        this.sysLogService = sysLogService;
     }
 
     @Override
-//    @Scheduled(cron = "0 0/1 * * * ?") // Check every minute
+    // @Scheduled(cron = "0 0/1 * * * ?") // Check every minute
     public void processDailyReminders() {
         log.debug("Checking for reminders... {}", LocalDateTime.now());
 
         // Find active reminders where nextRunDate <= today AND remindTime <= now
         // Simplified Logic: Select all active, filter in memory for prototype
-        List<Reminder> reminders = this.list(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<Reminder>().eq(Reminder::getIsActive, true));
+        List<Reminder> reminders = this
+                .list(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<Reminder>()
+                        .eq(Reminder::getIsActive, true));
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -41,7 +47,9 @@ public class ReminderServiceImpl extends ServiceImpl<ReminderMapper, Reminder> i
             // Check if due
             // For checking 'Time', we need careful comparison.
             // If nextRunDate is today (or past) AND current time >= remindTime
-            if (r.getNextRunDate() != null && (r.getNextRunDate().isBefore(now.toLocalDate()) || r.getNextRunDate().isEqual(now.toLocalDate())) && (now.toLocalTime().isAfter(r.getRemindTime()) || now.toLocalTime().equals(r.getRemindTime()))) {
+            if (r.getNextRunDate() != null
+                    && (r.getNextRunDate().isBefore(now.toLocalDate()) || r.getNextRunDate().isEqual(now.toLocalDate()))
+                    && (now.toLocalTime().isAfter(r.getRemindTime()) || now.toLocalTime().equals(r.getRemindTime()))) {
 
                 // Trigger Reminder
                 log.info("Triggering Reminder for patientId: {}, Content: {}", r.getPatientId(), r.getContent());
@@ -67,9 +75,11 @@ public class ReminderServiceImpl extends ServiceImpl<ReminderMapper, Reminder> i
         log.setPatientId(r.getPatientId());
         log.setPhone(phone);
         log.setContent(r.getContent());
-        log.setStatus(success ? 1 : 0);
         log.setCreateTime(LocalDateTime.now());
         reminderLogMapper.insert(log);
+
+        // Also save to sys_log
+        sysLogService.log("SMS", "Sent SMS to phone: " + phone + ", Content: " + r.getContent(), success);
     }
 
     private void updateNextRunDate(Reminder r) {
