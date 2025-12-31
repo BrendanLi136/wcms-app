@@ -1,0 +1,15 @@
+[Unit]
+Description=WCMS Backend Service
+After=syslog.target network.target mysql.service
+
+[Service]
+User=root
+# Change this to your actual deployment path on server
+WorkingDirectory=/www/wwwroot/wcms-app/backend
+ExecStart=/usr/bin/java -Xms512m -Xmx1024m -jar wcms-backend-0.0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -68,12 +68,15 @@ Page({
         });
     },
     // Helper to upload a single file as a Promise
-    uploadFilePromise(filePath) {
+    uploadFilePromise(filePath, patientId) {
         return new Promise((resolve, reject) => {
             wx.uploadFile({
                 url: app.globalData.baseUrl + '/upload',
                 filePath: filePath,
                 name: 'file',
+                formData: {
+                    'patientId': patientId
+                },
                 success: (res) => {
                     try {
                         const data = JSON.parse(res.data);
@@ -128,7 +131,7 @@ Page({
 
         try {
             // 1. Upload all images first
-            const uploadPromises = this.data.images.map(path => this.uploadFilePromise(path));
+            const uploadPromises = this.data.images.map(path => this.uploadFilePromise(path, user.id));
             const uploadedUrls = await Promise.all(uploadPromises);
 
             // 2. Submit Data
