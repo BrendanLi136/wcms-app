@@ -33,11 +33,11 @@ public class AppController {
         if (patient == null) {
             return Result.error("User not found");
         }
-        patient.setName(req.getName());
+//        patient.setName(req.getName());
         patient.setPhone(req.getPhone());
-        patient.setGender(req.getGender());
-        patient.setAge(req.getAge());
-        patient.setHistory(req.getHistory());
+//        patient.setGender(req.getGender());
+//        patient.setAge(req.getAge());
+//        patient.setHistory(req.getHistory());
         patientService.updateById(patient);
         return Result.success(patient);
     }
