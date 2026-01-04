@@ -10,11 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
-import java.util.ArrayList;
 
 @Slf4j
 @RestController
@@ -31,14 +27,19 @@ public class AppController {
         return Result.success(patientService.loginByCode(req.getCode()));
     }
 
-    @PostMapping("/updatePhone")
-    public Result<Patient> updatePhone(@RequestBody PhoneReq req) {
-        Patient patient = patientService.updatePhone(req.getUserId(), req.getCode(), req.getEncryptedData(),
-                req.getIv());
-        if (patient != null) {
-            return Result.success(patient);
+    @PostMapping("/updateProfile")
+    public Result<Patient> updateProfile(@RequestBody UpdateProfileReq req) {
+        Patient patient = patientService.getById(req.getUserId());
+        if (patient == null) {
+            return Result.error("User not found");
         }
-        return Result.error("User not found or Decrypt failed");
+        patient.setName(req.getName());
+        patient.setPhone(req.getPhone());
+        patient.setGender(req.getGender());
+        patient.setAge(req.getAge());
+        patient.setHistory(req.getHistory());
+        patientService.updateById(patient);
+        return Result.success(patient);
     }
 
     // Upload Image
@@ -82,15 +83,13 @@ public class AppController {
     }
 
     @Data
-    public static class PhoneReq {
+    public static class UpdateProfileReq {
         private Long userId;
-        private String code; // can be removed if using sessionKey stored in backend, but often frontend
-                             // sends code to refresh session if needed.
-                             // However, for decryption we need session_key.
-                             // Simplify: Frontend sends code -> Backend gets OpenID+SessionKey.
-                             // OR Frontend sends encryptedData + iv + code (to get sessionKey).
-        private String encryptedData;
-        private String iv;
+        private String name;
+        private String phone;
+        private Integer gender;
+        private Integer age;
+        private String history;
     }
 
     @Data
