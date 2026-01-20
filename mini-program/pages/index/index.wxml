@@ -3,7 +3,7 @@
   <view class="header-banner">
     <!-- You can replace this with a real <image> if you have the asset -->
     <view class="banner-img">
-      <image src="/image/bg.jpg" class="bg-image" mode="widthFix"></image>
+      <image src="https://xiaohu.org.cn/home.jpg" class="bg-image" mode="widthFix"></image>
       <!-- <text style="color:#b0c4de; font-weight:bold; font-size:40rpx;">WCMS Analysis</text> -->
     </view>
   </view>

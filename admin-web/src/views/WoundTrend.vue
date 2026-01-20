@@ -8,7 +8,7 @@
             <el-option
                 v-for="item in patients"
                 :key="item.id"
-                :label="item.name + ' (' + item.phone + ')'"
+                :label="item.name + ' (' + item.id + ')'"
                 :value="item.id">
             </el-option>
         </el-select>

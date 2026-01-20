@@ -30,6 +30,10 @@
     "include": []
   },
   "appid": "wxf8ef24c969d2125b",
-  "editorSetting": {},
-  "libVersion": "3.13.0"
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "libVersion": "3.13.0",
+  "condition": {}
 }

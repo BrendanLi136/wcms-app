@@ -32,7 +32,7 @@ wcms:
 
 # 七牛云配置
 qiniu:
-  access-key: g-o-cAeLQoTGkbib91IbPs9quUZYSrBwREieNjKr
-  secret-key: XQiS6QWPoRvcDeW7YHkKksyZ4u22cfapk9fews6O
-  bucket: wams-app
-  domain: t7vecgtjo.hn-bkt.clouddn.com
+  access-key: oInp4dXu86qagZQ5n8ZYp9iF9MGPmFLXWAlyZoqQ
+  secret-key: 7YHYnbFoXQsRBdXafle2EdjJTrLgKiFLj2vv-cFg
+  bucket: cms-mini
+  domain: xiaohu.org.cn

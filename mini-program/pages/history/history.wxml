@@ -20,12 +20,12 @@
                 </view>
                 <view class="info-row">
                      <text class="label">分析结果:</text>
-                     <text class="value {{!item.analysisResult ? 'placeholder-text' : ''}}">{{item.analysisResult || '正在进行AI分析...'}}</text>
+                     <text class="value {{!item.woundType ? 'placeholder-text' : ''}}">{{item.woundType || '正在进行AI分析...'}}</text>
                 </view>
                  <!-- Future: Show Image Thumbnail if item.imagePaths -->
             </view>
 
-            <view class="card-footer" bindtap="viewDetail" data-id="{{item.id}}">
+            <view class="card-footer" bindtap="viewDetail" data-id="{{item}}">
                 <text>查看详情</text>
                 <text class="arrow">></text>
             </view>

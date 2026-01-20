@@ -57,7 +57,7 @@ public class QiniuUtil {
             // 检查上传结果
             if (response.isOK()) {
                 // 返回完整的文件URL
-                return String.format("http://%s/%s", qiniuConfig.getDomain(), key);
+                return String.format("https://%s/%s", qiniuConfig.getDomain(), key);
             } else {
                 throw new RuntimeException("七牛云上传失败：" + response.bodyString());
             }

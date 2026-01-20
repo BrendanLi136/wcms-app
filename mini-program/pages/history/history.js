@@ -29,11 +29,13 @@ Page({
         });
     },
     viewDetail(e) {
+        console.log(e.currentTarget.dataset);
+        
         const id = e.currentTarget.dataset.id;
         // Future: Navigate to detail page
         wx.showModal({
             title: '详情',
-            content: '查看记录详情 ID: ' + id,
+            content: e.currentTarget.dataset.id.analysisResult,
             showCancel: false
         });
     }

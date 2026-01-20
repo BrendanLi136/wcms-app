@@ -64,7 +64,7 @@ public class WoundServiceImpl extends ServiceImpl<WoundRecordMapper, WoundRecord
         }
 
         // Create Task
-        return this.createAnalysisTask(patientId, name, imageUrls, history, "DeepSeek", medicalRecordNo);
+        return this.createAnalysisTask(patientId, name, imageUrls, history, "Doubao", medicalRecordNo);
     }
 
     @Override
